@@ -1,10 +1,9 @@
 import numpy as np
 
-class database():
+class database:
 	def __init__(self, size, input_dims):
     #create database with input_dims as list of input dimensions
     self.size = size
-
     self.states = np.zeros() #image dimensions
     self.actions = np.zeros([self.size]+input_dims)
     self.terminals = np.zeros(self.size)
@@ -31,4 +30,3 @@ class database():
       self.counter = 0
 
     return
-  
