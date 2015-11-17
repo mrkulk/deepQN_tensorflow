@@ -14,10 +14,10 @@ class database:
 
 		return
 
-  def get_batches(indxs):
+  def get_batches(self, indxs):
     return self.states[indxs], self.actions[indxs], self.terminals[indxs], self.nextstates[indxs], self.rewards[indxs]
 
-  def insert(dic):
+  def insert(self, dic):
     self.states[self.counter] = dic['s']
     self.nextstates[self.counter] = dic['s_']
     self.rewards[self.counter] = dic['r']
