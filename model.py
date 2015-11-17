@@ -2,19 +2,21 @@ import tensorflow as tf
 
 class Model(object):
     def __init__(self, params, src_net):
-        self.X = tf.placeholder("float", [None, 28, 28, 1])
-        self.Y = tf.placeholder("float", [None, 10])
-        self.reward = tf.placeholder("float", [1])
+        self.X = tf.placeholder("float", [None, 210, 160, 3]) #input image
+        self.actions = tf.placeholder("float", [None, params['num_actions']])
+        self.rewards = tf.placeholder("float", [None, 1])
+        self.terminals = tf.placeholder("float", [None, 1])
+        
         if src_net is not None: #copy network
           self.w = tf.Variable(src_net.w); self.w2 = tf.Variable(src_net.w2);
           self.w3 = tf.Variable(src_net.w3); self.w4 = tf.Variable(src_net.w4)
           self.w_o = tf.Variable(src_net.w_o)
         else: #initialize network from scratch
-          self.w = self.init_weights([3, 3, 1, 32] )
+          self.w = self.init_weights([3, 3, 3, 32] )
           self.w2 = self.init_weights([3, 3, 32, 64])
-          self.w3 = self.init_weights([3, 3, 64, 128])
-          self.w4 = self.init_weights([128 * 4 * 4, 625])
-          self.w_o = self.init_weights([625, params['num_actions']])
+          self.w3 = self.init_weights([3, 3, 64, 64])
+          self.w4 = self.init_weights([64 * 4 * 4, 512])
+          self.w_o = self.init_weights([512, params['num_actions']])
 
         self.param_list = [self.w, self.w2, self.w3, self.w4, self.w_o]
         
