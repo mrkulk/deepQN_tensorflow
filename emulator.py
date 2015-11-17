@@ -17,8 +17,8 @@ class emulator:
 
 	def next(self, action_indx):
 		reward = ale.act(action_indx)
-    # numpy_surface = np.frombuffer(screen.get_buffer(),dtype=np.int32)
-    # ale.getScreenRGB(numpy_surface)
+		numpy_surface = np.frombuffer(screen.get_buffer(),dtype=np.int32)
+		ale.getScreenRGB(numpy_surface)
 
 if __name__ == "__main__":
 	engine = emulator('montezuma_revenge.bin')
