@@ -41,3 +41,5 @@ class Model(object):
 
     def init_weights(self, shape):
         return tf.Variable(tf.random_normal(shape, stddev=0.01))
+
+
