@@ -11,10 +11,11 @@ params = {
   'db_size': 1000,
   'bsize': 100,
   'num_actions': 10,
-  'iter_qnet_to_target_copy': 1000  
+  'iter_qnet_to_target_copy': 1000,
+  'input_dims' : [210, 160, 3]
 }
 
-DB = database(params['db_size'])
+DB = database(params['db_size'], params['input_dims'])
 engine = emulator('montezuma_revenge.bin')
 
 #creating Q and target network. 
