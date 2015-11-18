@@ -16,9 +16,10 @@ class emulator:
 		print("width/height: " +str(self.screen_width) + "/" + str(self.screen_height))
 
 	def next(self, action_indx):
-		reward = ale.act(action_indx)	
-    numpy_surface = np.frombuffer(screen.get_buffer(),dtype=np.int32)
-    ale.getScreenRGB(numpy_surface)
+		reward = self.ale.act(action_indx)	
+		numpy_surface = np.zeros((self.screen_height, self.screen_width, 3))
+		self.ale.getScreenRGB(numpy_surface)
+
 
 if __name__ == "__main__":
 	engine = emulator('montezuma_revenge.bin')
