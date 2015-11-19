@@ -16,7 +16,7 @@ params = {
   'input_dims' : [210, 160, 3],
   'num_episodes': 100,
   'episode_max_length': 1000,
-  'update_delay': 1000
+  'update_delay': 50
 }
 
 DB = database(params['db_size'], params['input_dims'])
@@ -66,7 +66,7 @@ def update_params():
   sess.run(train_op, feed_dict={qnet.X: states, qnet.actions: actions, qnet.terminals:terminals, qnet.rewards: rewards})
 
 def train():
-  cnt = 1
+  cnt = 1; delay = 1
   for e in range(params['epochs']):
     for numeps in range(params['num_episodes']):
       prevstate = None; action = None; terminal = None
@@ -80,6 +80,15 @@ def train():
         if cnt >= params['update_delay']:
           print '.' ,
           update_params()
+          delay = delay + 1
+
+        if delay >= params['update_delay']:
+          #copy qnet to targetnet
+          print 'Copying qnet to targetnet'
+          targetnet = Model(params, qnet)
+          sess.run(tf.initialize_variables(targetnet.param_list))
+          delay = 1
+          
         prevstate = newstate
         newstate, reward, terminal = engine.next(action) #IMP: newstate contains terminal info
 
