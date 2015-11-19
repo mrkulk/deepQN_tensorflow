@@ -9,15 +9,17 @@ import pdb
 
 params = {
   'epochs': 10,
-  'db_size': 1000,
-  'bsize': 100,
+  'db_size': 10000,
+  'bsize': 32,
   'num_actions': 10,
   'iter_qnet_to_target_copy': 1000,
   'input_dims' : [210, 160, 3],
   'num_episodes': 100,
   'episode_max_length': 1000,
   'update_delay': 50,
-  'eps': 0.1
+  'eps': 1,
+  'discount': 0.99,
+  'lr': 0.0005
 }
 
 DB = database(params['db_size'], params['input_dims'])
@@ -44,11 +46,11 @@ def select_action(state):
 def perceive(newstate, terminal):
   if not terminal: 
     action = select_action(newstate)
-    print action
     return action
 
 def get_cost(nextstates, actions, terminals, rewards):
-  maxval = tf.reduce_max(targetnet.pyx, 1)
+  discount = tf.constant(params['discount'])
+  maxval = tf.mul(discount, tf.reduce_max(targetnet.pyx, 1))
   y_j = tf.add(targetnet.rewards, tf.mul(targetnet.terminals, maxval))
   #we do not want to backprop and only need the value from the target network
   # yj_val = sess.run(y_j, feed_dict = {targetnet.X: nextstates, targetnet.actions: np.zeros((params['bsize'],params['num_actions'])), targetnet.terminals:np.zeros((params['bsize'],1)), targetnet.rewards: np.zeros((params['bsize'],1))}) #TODO check
@@ -75,7 +77,7 @@ def update_params():
   cost = get_cost(nextstates, actions, terminals, rewards)
   # sess.run(tf.initialize_variables([cost]))
 
-  train_op = tf.train.GradientDescentOptimizer(0.00001).minimize(cost); 
+  train_op = tf.train.GradientDescentOptimizer(params['lr']).minimize(cost); 
   # sess.run(tf.initialize_all_variables())
   sess.run(train_op, feed_dict={qnet.X: states, qnet.actions: actions, qnet.terminals:terminals, qnet.rewards: rewards})
 
