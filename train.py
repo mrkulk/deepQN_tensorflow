@@ -38,11 +38,13 @@ def get_cost(nextstates, actions, terminals, rewards):
   y_j = tf.add(targetnet.rewards, tf.mul(targetnet.terminals, maxval))
   #we do not want to backprop and only need the value from the target network
   # yj_val = sess.run(y_j, feed_dict = {targetnet.X: nextstates, targetnet.actions: np.zeros((params['bsize'],params['num_actions'])), targetnet.terminals:np.zeros((params['bsize'],1)), targetnet.rewards: np.zeros((params['bsize'],1))}) #TODO check
-  yj_val = sess.run(y_j, feed_dict = {targetnet.X: nextstates, targetnet.actions: actions, targetnet.terminals: terminals, targetnet.rewards: rewards }) #TODO check
+  yj_val = sess.run(y_j, feed_dict = {targetnet.X: nextstates, targetnet.actions: actions, targetnet.terminals: terminals, targetnet.rewards: rewards }) #TODO check  
   yj_val = tf.Variable(yj_val); sess.run(tf.initialize_variables([yj_val]))
 
   Q_pred = tf.reduce_sum(qnet.pyx*qnet.actions, reduction_indices=[1,])
-  return tf.pow(tf.sub(yj_val, Q_pred), 2)
+  loss = tf.pow(tf.sub(yj_val, Q_pred), 2)
+  # sess.run(tf.initialize_variables([Q_pred, loss]))
+  return loss
 
 def get_onehot(actions):
   actions_onehot = np.zeros((params['bsize'], params['num_actions']))
@@ -57,8 +59,10 @@ def update_params():
   actions = get_onehot(actions)
   # print(np.shape(actions), np.shape(terminals), np.shape(rewards))
   cost = get_cost(nextstates, actions, terminals, rewards)
-  train_op = tf.train.RMSPropOptimizer(0.001, 0.9).minimize(cost)
+  # sess.run(tf.initialize_variables([cost]))
 
+  train_op = tf.train.GradientDescentOptimizer(0.00001).minimize(cost); 
+  # sess.run(tf.initialize_all_variables())
   sess.run(train_op, feed_dict={qnet.X: states, qnet.actions: actions, qnet.terminals:terminals, qnet.rewards: rewards})
 
 def train():
@@ -67,12 +71,14 @@ def train():
     for numeps in range(params['num_episodes']):
       prevstate = None; action = None; terminal = None
       newstate = engine.newGame()
+      print '\n'
       for maxl in range(params['episode_max_length']):
         if prevstate is not None:
           DB.insert({'s': prevstate, 's_': newstate, 'r':reward, 'a':action, 't' : terminal})
           cnt = cnt + 1
         action = perceive(newstate, terminal)
         if cnt >= params['update_delay']:
+          print '.' ,
           update_params()
         prevstate = newstate
         newstate, reward, terminal = engine.next(action) #IMP: newstate contains terminal info
