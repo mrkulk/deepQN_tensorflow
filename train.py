@@ -44,6 +44,7 @@ def select_action(state):
 def perceive(newstate, terminal):
   if not terminal: 
     action = select_action(newstate)
+    print action
     return action
 
 def get_cost(nextstates, actions, terminals, rewards):
@@ -62,7 +63,7 @@ def get_cost(nextstates, actions, terminals, rewards):
 def get_onehot(actions):
   actions_onehot = np.zeros((params['bsize'], params['num_actions']))
   for i in range(len(actions)):
-    actions_onehot[i][actions[i]] = 1
+    actions_onehot[i][engine.action_map[int(actions[i])]] = 1
   return actions_onehot
 
 def update_params():
