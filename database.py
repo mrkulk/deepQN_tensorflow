@@ -6,9 +6,9 @@ class database:
     self.size = size
     self.states = np.zeros([self.size] + input_dims) #image dimensions
     self.actions = np.zeros(self.size)
-    self.terminals = np.zeros(self.size)
+    self.terminals = np.zeros((self.size,1))
     self.nextstates = np.zeros([self.size] + input_dims)
-    self.rewards = np.zeros(self.size)
+    self.rewards = np.zeros((self.size,1))
 
     self.counter = 0 #keep track of next empty state
 
@@ -20,9 +20,9 @@ class database:
   def insert(self, dic):
     self.states[self.counter] = dic['s']
     self.nextstates[self.counter] = dic['s_']
-    self.rewards[self.counter] = dic['r']
+    self.rewards[self.counter][0] = dic['r']
     self.actions[self.counter] = dic['a']
-    self.terminals[self.counter] = dic['t']
+    self.terminals[self.counter][0] = dic['t']
 
     #update counter
     self.counter += 1
