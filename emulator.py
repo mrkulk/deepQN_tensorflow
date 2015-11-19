@@ -4,8 +4,10 @@ import copy
 import sys
 from ale_python_interface import ALEInterface
 import scipy.misc
-import pygame
+import cv2
 
+cv2.startWindowThread()
+cv2.namedWindow("preview")
 
 class emulator:
 	def __init__(self, rom_name, vis):
@@ -14,13 +16,9 @@ class emulator:
 		self.ale.setInt("random_seed",123)
 		self.ale.loadROM('/home/tejas/Documents/MIT/alewrap/roms/' + rom_name )
 		self.legal_actions = self.ale.getMinimalActionSet()
+		# print(self.legal_actions)
 		self.screen_width,self.screen_height = self.ale.getScreenDims()
 		print("width/height: " +str(self.screen_width) + "/" + str(self.screen_height))
-		if vis:
-			pygame.init()
-			self.screen = pygame.display.set_mode((self.screen_width,self.screen_height))
-			pygame.display.set_caption("Arcade Learning Environment Random Agent Display")
-			pygame.display.flip()
 		self.vis = vis
 
 	def get_image(self):
@@ -36,10 +34,10 @@ class emulator:
 	def next(self, action_indx):
 		reward = self.ale.act(action_indx)	
 		nextstate = self.get_image()
+		scipy.misc.imsave('test.png',nextstate)
 		if self.vis:
-			numpy_surface = np.frombuffer(self.screen.get_buffer(),dtype=np.int8)
-			self.ale.getScreenRGB(numpy_surface)
-			pygame.display.flip()
+			cv2.imshow('preview',nextstate)
+
 		return nextstate, reward, self.ale.game_over()
 
 

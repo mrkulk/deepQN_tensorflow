@@ -16,17 +16,30 @@ params = {
   'input_dims' : [210, 160, 3],
   'num_episodes': 100,
   'episode_max_length': 1000,
-  'update_delay': 50
+  'update_delay': 50,
+  'eps': 0.1
 }
 
 DB = database(params['db_size'], params['input_dims'])
-engine = emulator(rom_name='montezuma_revenge.bin', vis=True)
-
+engine = emulator(rom_name='breakout.bin', vis=True)
+params['num_actions'] = len(engine.legal_actions)
 #creating Q and target network. 
 qnet = Model(params, None)
-#TODO
+
+
+print(engine.legal_actions)
 def select_action(state):
-  return 0
+  if False:# np.random.rand() > params['eps']:
+    #greedy with random tie-breaking
+    Q_pred = sess.run(qnet.pyx, feed_dict = {qnet.X: np.reshape(state, (1,210,160,3)), qnet.actions: np.zeros((params['bsize'],params['num_actions'])), qnet.terminals:np.zeros((params['bsize'],1)), qnet.rewards: np.zeros((params['bsize'],1))})[0] #TODO check
+    a_winner = np.argwhere(Q_pred == np.amax(Q_pred))
+    if len(a_winner) > 1:
+      return engine.legal_actions[a_winner[np.randint(0, len(a_winner))][0]]
+    else:
+      return engine.legal_actions[a_winner[0][0]]
+  else:
+    #random
+    return engine.legal_actions[np.random.randint(0,len(engine.legal_actions))]
 
 def perceive(newstate, terminal):
   if not terminal: 
