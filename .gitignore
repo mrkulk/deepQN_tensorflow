@@ -1,3 +1,5 @@
+.idea
+.ipynb_checkpoints
 results
 MNIST*
 *.pyc
