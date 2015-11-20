@@ -19,7 +19,7 @@ class emulator:
 		self.action_map = dict()
 		for i in range(len(self.legal_actions)):
 			self.action_map[self.legal_actions[i]] = i
-			
+
 		# print(self.legal_actions)
 		self.screen_width,self.screen_height = self.ale.getScreenDims()
 		print("width/height: " +str(self.screen_width) + "/" + str(self.screen_height))
@@ -41,7 +41,6 @@ class emulator:
 		# scipy.misc.imsave('test.png',nextstate)
 		if self.vis:
 			cv2.imshow('preview',nextstate)
-
 		return nextstate, reward, self.ale.game_over()
 
 

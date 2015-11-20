@@ -16,7 +16,8 @@ params = {
   'input_dims' : [210, 160, 3],
   'num_episodes': 100,
   'episode_max_length': 1000,
-  'update_delay': 50,
+  'update_params': 50,
+  'copy_qnet': 500,
   'eps': 1,
   'discount': 0.99,
   'lr': 0.0005
@@ -82,31 +83,37 @@ def update_params():
   sess.run(train_op, feed_dict={qnet.X: states, qnet.actions: actions, qnet.terminals:terminals, qnet.rewards: rewards})
 
 def train():
-  cnt = 1; delay = 1
+  global_cntr = 1
   for e in range(params['epochs']):
     for numeps in range(params['num_episodes']):
       prevstate = None; action = None; terminal = None
       newstate = engine.newGame()
       print '\n'
+      cnt = 1; delay = 1
       for maxl in range(params['episode_max_length']):
         if prevstate is not None:
           DB.insert({'s': prevstate, 's_': newstate, 'r':reward, 'a':action, 't' : terminal})
           cnt = cnt + 1
         action = perceive(newstate, terminal)
-        if cnt >= params['update_delay']:
+        if action == None: #TODO - check [terminal condition]
+          break
+        if cnt % params['update_params'] == 0:
           print '.' ,
           update_params()
           delay = delay + 1
-
-        if delay >= params['update_delay']:
+     
+        if delay % params['copy_qnet'] == 0:
           #copy qnet to targetnet
           print 'Copying qnet to targetnet'
           targetnet = Model(params, qnet)
           sess.run(tf.initialize_variables(targetnet.param_list))
-          delay = 1
           
         prevstate = newstate
         newstate, reward, terminal = engine.next(action) #IMP: newstate contains terminal info
+
+        params['eps'] = 0.1 + max(0, (1 - 0.1) * (1000000 - max(0, global_cntr))/1000000)
+        global_cntr = global_cntr + 1
+
 
 def unit_test():
   qnet = Model(params, None)
