@@ -29,15 +29,6 @@ params = {
   'plot_delay': 1000
 }
 
-qvals = []
-global_cntr = 1
-
-DB = database(params['db_size'], params['input_dims'])
-engine = emulator(rom_name='breakout.bin', vis=False)
-params['num_actions'] = len(engine.legal_actions)
-#creating Q and target network. 
-qnet = Model(params, None)
-
 def select_action(state):
   if np.random.rand() > params['eps']:
     #greedy with random tie-breaking
@@ -106,25 +97,32 @@ def train():
       sys.stdout.flush()
 
 
-# creating Q and target network. 
-qnet = Model(params, None)
-sess = tf.Session()
-init = tf.initialize_all_variables()
-sess.run(init)
-targetnet = Model(params, qnet)
-sess.run(tf.initialize_variables(targetnet.param_list))
+if __name__ == "__main__":
+  qvals = []
+  global_cntr = 1
+  DB = database(params['db_size'], params['input_dims'])
+  engine = emulator(rom_name='breakout.bin', vis=False)
+  params['num_actions'] = len(engine.legal_actions)
 
-#cost calculation
-discount = tf.constant(params['discount'])
-maxval = tf.mul(discount, tf.reduce_max(targetnet.pyx, 1))
-yj_val = tf.add(targetnet.rewards, tf.mul(targetnet.terminals, maxval))
+  # creating Q and target network. 
+  qnet = Model(params, None)
+  sess = tf.Session()
+  init = tf.initialize_all_variables()
+  sess.run(init)
+  targetnet = Model(params, qnet)
+  sess.run(tf.initialize_variables(targetnet.param_list))
 
-Q_pred = tf.reduce_sum(qnet.pyx*qnet.actions, reduction_indices=[1,])
-cost = tf.pow(tf.sub(yj_val, Q_pred), 2)
+  #cost calculation
+  discount = tf.constant(params['discount'])
+  maxval = tf.mul(discount, tf.reduce_max(targetnet.pyx, 1))
+  yj_val = tf.add(targetnet.rewards, tf.mul(targetnet.terminals, maxval))
 
-train_op = tf.train.GradientDescentOptimizer(params['lr'])
-grads_and_vars = train_op.compute_gradients(cost, qnet.param_list)
-clipped_grads_and_vars = [(tf.clip_by_value(gv[0],-10.0,10.0), gv[1]) for gv in grads_and_vars]
-tflow_opt = train_op.apply_gradients(clipped_grads_and_vars)
+  Q_pred = tf.reduce_sum(qnet.pyx*qnet.actions, reduction_indices=[1,])
+  cost = tf.pow(tf.sub(yj_val, Q_pred), 2)
 
-train()
+  train_op = tf.train.GradientDescentOptimizer(params['lr'])
+  grads_and_vars = train_op.compute_gradients(cost, qnet.param_list)
+  clipped_grads_and_vars = [(tf.clip_by_value(gv[0],-10.0,10.0), gv[1]) for gv in grads_and_vars]
+  tflow_opt = train_op.apply_gradients(clipped_grads_and_vars)
+
+  train()

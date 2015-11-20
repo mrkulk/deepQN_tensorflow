@@ -1,14 +1,13 @@
-import cv2
 import numpy as np
 import copy
 import sys
 from ale_python_interface import ALEInterface
 import scipy.misc
-import cv2
-
 
 class emulator:
 	def __init__(self, rom_name, vis):
+		if vis:
+			import cv2
 		self.ale = ALEInterface()
 		self.max_frames_per_episode = self.ale.getInt("max_num_frames_per_episode");
 		self.ale.setInt("random_seed",123)
