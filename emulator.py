@@ -6,14 +6,13 @@ from ale_python_interface import ALEInterface
 import scipy.misc
 import cv2
 
-cv2.startWindowThread()
-cv2.namedWindow("preview")
 
 class emulator:
 	def __init__(self, rom_name, vis):
 		self.ale = ALEInterface()
 		self.max_frames_per_episode = self.ale.getInt("max_num_frames_per_episode");
 		self.ale.setInt("random_seed",123)
+		self.ale.setInt("frame_skip",4)
 		self.ale.loadROM('/home/tejas/Documents/MIT/alewrap/roms/' + rom_name )
 		self.legal_actions = self.ale.getMinimalActionSet()
 		self.action_map = dict()
@@ -24,6 +23,9 @@ class emulator:
 		self.screen_width,self.screen_height = self.ale.getScreenDims()
 		print("width/height: " +str(self.screen_width) + "/" + str(self.screen_height))
 		self.vis = vis
+		if vis: 
+			cv2.startWindowThread()
+			cv2.namedWindow("preview")
 
 	def get_image(self):
 		numpy_surface = np.zeros(self.screen_height*self.screen_width*3, dtype=np.uint8)

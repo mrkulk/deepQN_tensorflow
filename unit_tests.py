@@ -45,3 +45,18 @@ def unit_test_cost():
   })
   print(np.shape(res))
   print(res[0:10])
+
+def unit_test():
+  qnet = Model(params, None)
+  sess = tf.Session()
+  init = tf.initialize_all_variables()
+  sess.run(init)
+ 
+  targetnet = Model(params, qnet)
+  sess.run(tf.initialize_variables(targetnet.param_list))
+
+  maxval = tf.reduce_max(targetnet.pyx, 1)
+  y_j = tf.add(targetnet.rewards, tf.mul(targetnet.terminals, maxval))
+  yj_val = sess.run(y_j, feed_dict = {targetnet.X: np.zeros((params['bsize'],210, 160,3)), targetnet.actions: np.zeros((params['bsize'],params['num_actions'])), targetnet.terminals:np.zeros((params['bsize'],1)), targetnet.rewards: np.zeros((params['bsize'],1))}) #TODO check
+  print(':', np.shape(yj_val))
+# unit_test()
