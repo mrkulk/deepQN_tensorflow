@@ -13,7 +13,7 @@ class emulator:
 		self.max_frames_per_episode = self.ale.getInt("max_num_frames_per_episode");
 		self.ale.setInt("random_seed",123)
 		self.ale.setInt("frame_skip",4)
-		self.ale.loadROM('/home/tejas/Documents/MIT/alewrap/roms/' + rom_name )
+		self.ale.loadROM('roms/' + rom_name )
 		self.legal_actions = self.ale.getMinimalActionSet()
 		self.action_map = dict()
 		for i in range(len(self.legal_actions)):
