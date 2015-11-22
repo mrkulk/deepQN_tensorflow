@@ -13,7 +13,7 @@ import gc, time
 gc.enable()
 
 params = {
-  'epochs': 100,
+  'epochs': 10000,
   'db_size': 100000,
   'bsize': 32,
   'num_actions': 10,
@@ -89,7 +89,7 @@ def train():
           
         prevstate = newstate
         newstate, reward, terminal = engine.next(action) #IMP: newstate contains terminal info
-        params['eps'] = 0.1 + max(0, (1 - 0.1) * (1000000 - max(0, global_cntr))/1000000)
+        params['eps'] = 0.1 + max(0, (1 - 0.1) * (100000 - max(0, global_cntr))/100000)
         total_reward_ep = total_reward_ep + reward
         global_cntr = global_cntr + 1
 
