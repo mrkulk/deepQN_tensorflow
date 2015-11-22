@@ -13,7 +13,7 @@ import gc, time
 gc.enable()
 
 params = {
-  'epochs': 10,
+  'epochs': 100,
   'db_size': 100000,
   'bsize': 32,
   'num_actions': 10,
