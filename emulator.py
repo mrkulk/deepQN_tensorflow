@@ -2,7 +2,7 @@ import numpy as np
 import copy
 import sys
 from ale_python_interface import ALEInterface
-import scipy.misc
+#import scipy.misc
 
 class emulator:
 	def __init__(self, rom_name, vis):

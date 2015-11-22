@@ -5,8 +5,8 @@ from emulator import *
 from database import *
 import copy
 import pdb
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
+#import matplotlib.pyplot as plt
+#from matplotlib.backends.backend_pdf import PdfPages
 import sys
 import gc, time
 
