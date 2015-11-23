@@ -93,9 +93,8 @@ def train():
         total_reward_ep = total_reward_ep + reward
         global_cntr = global_cntr + 1
 
-      sys.stdout.write("Episode: %d | Training progress: %d | ep_time: %f | reward: %f \r" % (numeps, global_cntr, time.time()-start_time, total_reward_ep))
+      sys.stdout.write("Episode: %d | Training progress: %d | ep_time: %f | reward: %f \n" % (numeps, global_cntr, time.time()-start_time, total_reward_ep))
       sys.stdout.flush()
-
 
 if __name__ == "__main__":
   qvals = []
