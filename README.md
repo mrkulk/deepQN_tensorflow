@@ -1,2 +1,2 @@
 # Deep Q Learning for ATARI using Tensorflow
-Coming soon ...
+Run: `python train.py`
