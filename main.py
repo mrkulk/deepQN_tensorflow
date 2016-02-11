@@ -16,7 +16,7 @@ params = {
 	'num_episodes': 250000,
 	'rms_decay':0.99,
 	'rms_eps':1e-6,
-	'db_size': 100000,
+	'db_size': 1000000,
 	'batch': 32,
 	'num_act': 0,
 	'input_dims' : [210, 160, 3],
