@@ -2,20 +2,12 @@ import numpy as np
 import copy
 import sys
 from ale_python_interface import ALEInterface
-<<<<<<< HEAD
 import cv2
 import time
-=======
->>>>>>> d5615ec9b30da88ac15a793a409af91b4bd2c934
 #import scipy.misc
 
 class emulator:
 	def __init__(self, rom_name, vis):
-<<<<<<< HEAD
-=======
-		if vis:
-			import cv2
->>>>>>> d5615ec9b30da88ac15a793a409af91b4bd2c934
 		self.ale = ALEInterface()
 		self.max_frames_per_episode = self.ale.getInt("max_num_frames_per_episode");
 		self.ale.setInt("random_seed",123)
@@ -55,11 +47,6 @@ class emulator:
 
 
 if __name__ == "__main__":
-<<<<<<< HEAD
 	engine = emulator('breakout.bin',True)
 	engine.next(0)
 	time.sleep(5)
-=======
-	engine = emulator('montezuma_revenge.bin')
-	engine.next(0)
->>>>>>> d5615ec9b30da88ac15a793a409af91b4bd2c934
