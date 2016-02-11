@@ -1,6 +1,6 @@
-<font size="15">Deep Q Learning for ATARI using Tensorflow</font>
+#Deep Q Learning for ATARI using Tensorflow
 
-Usage : python main.py (ckpt file)
+Usage : 'python main.py (ckpt file)'
 
 This version is still under test.
 
